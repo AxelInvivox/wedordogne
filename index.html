@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week-end Dordogne · Corrèze</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --forest: #2C3E2D;
+    --moss: #4A6741;
+    --sage: #7A9B6E;
+    --stone: #C4B49A;
+    --sand: #E8DCC8;
+    --parchment: #F5EFE3;
+    --cream: #FBF7F0;
+    --ink: #1A1610;
+    --muted: #7A6E5F;
+    --gold: #B8892A;
+    --rust: #8B4A2E;
+    --dusk: #3D3028;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    background: var(--forest);
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 30%, rgba(74,103,65,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 80% at 10% 80%, rgba(184,137,42,0.15) 0%, transparent 50%),
+      linear-gradient(160deg, #1A2A1B 0%, #2C3E2D 40%, #1E2D1F 100%);
+  }
+
+  /* Decorative topographic lines */
+  .topo-lines {
+    position: absolute;
+    inset: 0;
+    opacity: 0.07;
+    background-image:
+      repeating-linear-gradient(
+        -15deg,
+        transparent,
+        transparent 28px,
+        rgba(196,180,154,0.8) 28px,
+        rgba(196,180,154,0.8) 29px
+      );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 48px 64px;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--stone);
+    font-weight: 500;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--cream);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--stone);
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(245,239,227,0.55);
+    font-weight: 300;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-days {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .hero-day-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid rgba(196,180,154,0.3);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    color: var(--sand);
+    font-size: 13px;
+    font-weight: 400;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-day-pill:hover {
+    background: rgba(196,180,154,0.15);
+    border-color: rgba(196,180,154,0.6);
+    color: var(--cream);
+    transform: translateY(-2px);
+  }
+
+  .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .dot-ven { background: var(--sage); }
+  .dot-sam { background: var(--gold); }
+  .dot-dim { background: var(--rust); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 24px;
+    right: 48px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(196,180,154,0.5);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+
+  .scroll-arrow {
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(196,180,154,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 2s 2s infinite;
+  }
+
+  /* ── DAY SECTIONS ── */
+  .day-section {
+    position: relative;
+    padding: 80px 0;
+  }
+
+  .day-section:nth-child(odd) { background: var(--cream); }
+  .day-section:nth-child(even) { background: var(--parchment); }
+
+  .day-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 0 48px 56px;
+    max-width: 900px;
+    margin: 0 auto;
+    border-bottom: 1px solid rgba(196,180,154,0.3);
+    margin-bottom: 52px;
+  }
+
+  .day-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 96px;
+    font-weight: 300;
+    line-height: 0.85;
+    color: rgba(196,180,154,0.2);
+    flex-shrink: 0;
+    letter-spacing: -4px;
+  }
+
+  .day-info { flex: 1; padding-top: 4px; }
+
+  .day-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .day-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .day-theme {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  .day-color-bar {
+    width: 3px;
+    height: 60px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+
+  .bar-ven { background: linear-gradient(to bottom, var(--sage), var(--moss)); }
+  .bar-sam { background: linear-gradient(to bottom, var(--gold), #8B6B20); }
+  .bar-dim { background: linear-gradient(to bottom, var(--rust), var(--dusk)); }
+
+  /* ── TIMELINE ── */
+  .timeline-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 52px;
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(196,180,154,0.5), rgba(196,180,154,0.1));
+  }
+
+  .stop {
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .stop.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .stop:last-child { margin-bottom: 0; }
+
+  .stop-marker {
+    position: absolute;
+    left: -45px;
+    top: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .stop-dot-outer {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(196,180,154,0.3);
+    background: var(--cream);
+    flex-shrink: 0;
+  }
+
+  .stop-dot-inner {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .stop.minor .stop-dot-outer {
+    width: 16px;
+    height: 16px;
+    border-color: rgba(196,180,154,0.2);
+    margin-left: 4px;
+  }
+
+  .stop.minor .stop-dot-inner {
+    width: 5px;
+    height: 5px;
+    background: rgba(196,180,154,0.4);
+  }
+
+  .dot-ven-color { background: var(--sage); }
+  .dot-sam-color { background: var(--gold); }
+  .dot-dim-color { background: var(--rust); }
+
+  .stop-card {
+    background: var(--parchment);
+    border: 1px solid rgba(196,180,154,0.25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+
+  .day-section:nth-child(even) .stop-card {
+    background: var(--cream);
+  }
+
+  .stop-card:hover {
+    box-shadow: 0 8px 32px rgba(44,62,45,0.08);
+    transform: translateY(-2px);
+    border-color: rgba(196,180,154,0.45);
+  }
+
+  .stop.minor .stop-card {
+    padding: 14px 20px;
+    background: transparent;
+    border-style: dashed;
+    border-color: rgba(196,180,154,0.2);
+  }
+
+  .stop.minor .stop-card:hover {
+    box-shadow: none;
+    transform: none;
+    border-color: rgba(196,180,154,0.35);
+  }
+
+  .stop-time {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+
+  .time-ven { color: var(--sage); }
+  .time-sam { color: var(--gold); }
+  .time-dim { color: var(--rust); }
+
+  .stop-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .stop.minor .stop-name {
+    font-size: 17px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .stop-details {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stop-details li {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.55;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .stop-details li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    width: 4px;
+    height: 1px;
+    background: rgba(196,180,154,0.6);
+  }
+
+  /* ── SYNTHÈSE ── */
+  .synthese {
+    background: var(--forest);
+    padding: 80px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .synthese::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image: repeating-linear-gradient(
+      -15deg,
+      transparent, transparent 28px,
+      rgba(196,180,154,0.8) 28px, rgba(196,180,154,0.8) 29px
+    );
+  }
+
+  .synthese-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .synthese-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--stone);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .synthese-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 48px;
+  }
+
+  .synthese-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 56px;
+  }
+
+  .synthese-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(196,180,154,0.15);
+    padding: 28px 24px;
+    border-radius: 8px;
+  }
+
+  .synthese-day {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .synthese-day.s-ven { color: var(--sage); }
+  .synthese-day.s-sam { color: var(--gold); }
+  .synthese-day.s-dim { color: var(--rust); }
+
+  .synthese-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(245,239,227,0.75);
+    line-height: 1.4;
+  }
+
+  /* ── CONSEILS ── */
+  .conseils-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 24px;
+  }
+
+  .conseils-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .conseil {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .conseil-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: 1px solid rgba(196,180,154,0.2);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .conseil-text {
+    font-size: 13px;
+    color: rgba(196,180,154,0.75);
+    font-weight: 300;
+    line-height: 1.6;
+    padding-top: 4px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--dusk);
+    padding: 24px 48px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(196,180,154,0.3);
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s, backdrop-filter 0.3s;
+  }
+
+  .nav.scrolled {
+    background: rgba(26,22,16,0.88);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(196,180,154,0.7);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--cream); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    .nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 24px 48px; }
+    .scroll-hint { right: 24px; }
+    .day-header { padding: 0 24px 40px; flex-wrap: wrap; }
+    .day-number { font-size: 64px; }
+    .timeline-wrap { padding: 0 24px; }
+    .timeline { padding-left: 40px; }
+    .stop-marker { left: -35px; }
+    .synthese { padding: 60px 24px; }
+    .synthese-grid { grid-template-columns: 1fr; gap: 8px; }
+    .conseils-grid { grid-template-columns: 1fr; }
+    .footer { padding: 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">Dordogne · Corrèze</a>
+  <ul class="nav-links">
+    <li><a href="#vendredi">Vendredi</a></li>
+    <li><a href="#samedi">Samedi</a></li>
+    <li><a href="#dimanche">Dimanche</a></li>
+    <li><a href="#synthese">Synthèse</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="topo-lines"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Programme week-end · 3 jours</div>
+    <h1 class="hero-title">Dordogne<br><em>&amp; Corrèze</em></h1>
+    <p class="hero-sub">Vendredi → Dimanche · Au départ de Bordeaux</p>
+    <div class="hero-days">
+      <a href="#vendredi" class="hero-day-pill">
+        <span class="pill-dot dot-ven"></span>
+        Vendredi — Départ &amp; découvertes
+      </a>
+      <a href="#samedi" class="hero-day-pill">
+        <span class="pill-dot dot-sam"></span>
+        Samedi — Villages &amp; panoramas
+      </a>
+      <a href="#dimanche" class="hero-day-pill">
+        <span class="pill-dot dot-dim"></span>
+        Dimanche — Rocamadour &amp; retour
+      </a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-arrow">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M2 3.5L5 6.5L8 3.5" stroke="rgba(196,180,154,0.6)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    Défiler
+  </div>
+</section>
+
+<!-- VENDREDI -->
+<section class="day-section" id="vendredi">
+  <div class="day-header">
+    <div class="day-number">01</div>
+    <div class="day-info">
+      <div class="day-label">Jour 1</div>
+      <div class="day-name">Vendredi</div>
+      <div class="day-theme">Départ &amp; premières découvertes</div>
+    </div>
+    <div class="day-color-bar bar-ven"></div>
+  </div>
+  <div class="timeline-wrap">
+    <div class="timeline">
+      <div class="timeline-line"></div>
+
+      <div class="stop" data-delay="0">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-ven-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-ven">13H00</div>
+          <div class="stop-name">Départ de Bordeaux</div>
+          <ul class="stop-details">
+            <li>Direction Dordogne · Corrèze en voiture</li>
+            <li>Trajet d'environ 2h30</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop" data-delay="100">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-ven-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-ven">15H30</div>
+          <div class="stop-name">Jardins d'Eyrignac</div>
+          <ul class="stop-details">
+            <li>Pause nature et esthétique — 1h30</li>
+            <li>Balade agréable, accessible avec chien</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop" data-delay="200">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-ven-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-ven">17H30</div>
+          <div class="stop-name">Château de Fénelon</div>
+          <ul class="stop-details">
+            <li>Découverte extérieure + point de vue — 45 min à 1h</li>
+            <li>Étape courte pour garder un rythme fluide</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop minor" data-delay="300">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-ven">19H30</div>
+          <div class="stop-name">Arrivée à Lostanges</div>
+          <ul class="stop-details">
+            <li>Installation</li>
+            <li>Dîner tranquille — Beaulieu ou alentours recommandé</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SAMEDI -->
+<section class="day-section" id="samedi">
+  <div class="day-header">
+    <div class="day-number">02</div>
+    <div class="day-info">
+      <div class="day-label">Jour 2</div>
+      <div class="day-name">Samedi</div>
+      <div class="day-theme">Collonges-la-Rouge &amp; Turenne</div>
+    </div>
+    <div class="day-color-bar bar-sam"></div>
+  </div>
+  <div class="timeline-wrap">
+    <div class="timeline">
+      <div class="timeline-line"></div>
+
+      <div class="stop" data-delay="0">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-sam-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-sam">09H30</div>
+          <div class="stop-name">Collonges-la-Rouge</div>
+          <ul class="stop-details">
+            <li>Balade dans le village — 2h à 2h30</li>
+            <li>Rues, église, boutiques</li>
+            <li>Idéal tôt le matin pour éviter la foule</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop minor" data-delay="100">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-sam">12H15</div>
+          <div class="stop-name">Déjeuner</div>
+          <ul class="stop-details">
+            <li>Sur place à Collonges ou à Meyssac (plus calme)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop" data-delay="200">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-sam-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-sam">14H00</div>
+          <div class="stop-name">Turenne &amp; Château de Turenne</div>
+          <ul class="stop-details">
+            <li>Village moins touristique, très élégant</li>
+            <li>Montée vers les tours du château</li>
+            <li>Panorama sur la vallée</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop minor" data-delay="300">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-sam">16H30</div>
+          <div class="stop-name">Retour &amp; détente</div>
+          <ul class="stop-details">
+            <li>Retour vers Lostanges</li>
+            <li>Pause détente · apéro</li>
+            <li>Dîner — option gastronomique possible</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DIMANCHE -->
+<section class="day-section" id="dimanche">
+  <div class="day-header">
+    <div class="day-number">03</div>
+    <div class="day-info">
+      <div class="day-label">Jour 3</div>
+      <div class="day-name">Dimanche</div>
+      <div class="day-theme">Rocamadour &amp; Beaulieu-sur-Dordogne</div>
+    </div>
+    <div class="day-color-bar bar-dim"></div>
+  </div>
+  <div class="timeline-wrap">
+    <div class="timeline">
+      <div class="timeline-line"></div>
+
+      <div class="stop" data-delay="0">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-dim-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-dim">09H00</div>
+          <div class="stop-name">Rocamadour</div>
+          <ul class="stop-details">
+            <li>Visite du village — 2h à 3h</li>
+            <li>Balade + panoramas</li>
+            <li>Arriver tôt pour éviter la foule</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop minor" data-delay="100">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-dim">12H30</div>
+          <div class="stop-name">Déjeuner</div>
+          <ul class="stop-details">
+            <li>En terrasse à Rocamadour ou pique-nique</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop" data-delay="200">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner dot-dim-color"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-dim">14H30</div>
+          <div class="stop-name">Beaulieu-sur-Dordogne</div>
+          <ul class="stop-details">
+            <li>Balade sur les quais</li>
+            <li>Centre historique</li>
+            <li>Pause café · glace</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop minor" data-delay="300">
+        <div class="stop-marker">
+          <div class="stop-dot-outer"><div class="stop-dot-inner"></div></div>
+        </div>
+        <div class="stop-card">
+          <div class="stop-time time-dim">17H00</div>
+          <div class="stop-name">Retour vers Bordeaux</div>
+          <ul class="stop-details">
+            <li>Trajet ≈ 2h30 – 3h</li>
+            <li>Arrivée estimée ~20h</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SYNTHESE -->
+<section class="synthese" id="synthese">
+  <div class="synthese-inner">
+    <div class="synthese-label">Synthèse du week-end</div>
+    <h2 class="synthese-title">L'essentiel en un coup d'œil</h2>
+
+    <div class="synthese-grid">
+      <div class="synthese-card">
+        <div class="synthese-day s-ven">Vendredi</div>
+        <div class="synthese-desc">Trajet + 2 étapes visuelles fortes</div>
+      </div>
+      <div class="synthese-card">
+        <div class="synthese-day s-sam">Samedi</div>
+        <div class="synthese-desc">Villages emblématiques + panorama</div>
+      </div>
+      <div class="synthese-card">
+        <div class="synthese-day s-dim">Dimanche</div>
+        <div class="synthese-desc">Site spectaculaire + fin de séjour détente</div>
+      </div>
+    </div>
+
+    <div class="conseils-title">Conseils pratiques</div>
+    <div class="conseils-grid">
+      <div class="conseil">
+        <div class="conseil-icon">👟</div>
+        <div class="conseil-text">Prévoir chaussures confortables — pavés et relief</div>
+      </div>
+      <div class="conseil">
+        <div class="conseil-icon">⏰</div>
+        <div class="conseil-text">Arriver tôt sur les sites majeurs : Collonges et Rocamadour</div>
+      </div>
+      <div class="conseil">
+        <div class="conseil-icon">🐾</div>
+        <div class="conseil-text">Eau + pauses ombragées pour le chien</div>
+      </div>
+      <div class="conseil">
+        <div class="conseil-icon">🍽</div>
+        <div class="conseil-text">Réserver les restaurants à l'avance, surtout le samedi soir</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  Dordogne · Corrèze · Week-end 3 jours · Au départ de Bordeaux
+</footer>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Intersection Observer for stop animations
+  const stops = document.querySelectorAll('.stop');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = parseInt(entry.target.dataset.delay || 0);
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  stops.forEach(stop => observer.observe(stop));
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
